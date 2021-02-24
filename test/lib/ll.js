@@ -1,29 +1,26 @@
 const t = require('tap')
-const requireInject = require('require-inject')
 const configs = {}
 let lsCalled = false
-const ll = requireInject('../../lib/ll.js', {
-  '../../lib/npm.js': {
-    config: {
-      set: (k, v) => {
-        configs[k] = v
-      },
+const LL = require('../../lib/ll.js')
+const ll = new LL({
+  config: {
+    set: (k, v) => {
+      configs[k] = v
     },
-    commands: {
-      ls: (args, cb) => {
-        lsCalled = true
-        cb()
-      },
+  },
+  commands: {
+    ls: (args, cb) => {
+      lsCalled = true
+      cb()
     },
   },
 })
 
 const ls = require('../../lib/ls.js')
-const { usage, completion } = ls
-t.equal(ll.usage, usage)
-t.equal(ll.completion.toString(), completion.toString())
+const { usage } = ls
 t.test('the ll command', t => {
-  ll([], () => {
+  t.equal(ll.usage, usage)
+  ll.exec([], () => {
     t.equal(lsCalled, true)
     t.strictSame(configs, { long: true })
     t.end()

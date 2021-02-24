@@ -11,19 +11,18 @@ const npm = {
   },
 }
 
-const set = requireInject('../../lib/set.js', {
-  '../../lib/npm.js': npm,
-})
+const Set = requireInject('../../lib/set.js')
+const set = new Set(npm)
 
 test('npm set - no args', t => {
-  return set([], (err) => {
+  return set.exec([], (err) => {
     t.match(err, /npm set/, 'prints usage')
     t.end()
   })
 })
 
 test('npm set', t => {
-  return set(['email', 'me@me.me'], (err) => {
+  return set.exec(['email', 'me@me.me'], (err) => {
     if (err)
       throw err
 
